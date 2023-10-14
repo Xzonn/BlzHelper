@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net47;net6.0</TargetFrameworks>
+    <Version>0.9.0</Version>
+    <AssemblyVersion>0.9.0</AssemblyVersion>
+    <FileVersion>0.9.0</FileVersion>
+    <Copyright>Copyright © Xzonn 2023</Copyright>
+    <DebugType>embedded</DebugType>
+    <Title>BlzHelper</Title>
+    <PackageId>Xzonn.BlzHelper</PackageId>
+    <Authors>Xzonn</Authors>
+    <Company>Xzonn</Company>
+    <Product>BlzHelper</Product>
+    <PackageProjectUrl>https://github.com/Xzonn/BlzHelper</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Xzonn/BlzHelper</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IsPublishable>True</IsPublishable>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>nds;nintendo-ds;blz;</PackageTags>
+    <Description>A very simple blz compresser/decompresser.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include=".editorconfig" />
+    <None Include="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

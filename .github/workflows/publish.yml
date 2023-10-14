@@ -1,0 +1,38 @@
+name: Build on push
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Get latest tag
+        id: get-tag
+        run: |
+          $(git describe --tags) -Replace '^v', 'version=' >> $env:GITHUB_OUTPUT
+      - name: Build and pack package
+        env:
+          XZ_VERSION: ${{ steps.get-tag.outputs.version }}
+        run: |
+          Move-Item -Path "Xzonn.BlzHelper.csproj" -Destination "Xzonn.BlzHelper.csproj.bak"
+          Get-Content -Path "Xzonn.BlzHelper.csproj.bak" -Encoding UTF8 | ForEach-Object { $_ -Replace '<((?:Assembly|File)?Version)>[\d\.]+</\1>', "<`$1>$env:XZ_VERSION</`$1>" } | Out-File -FilePath "Xzonn.BlzHelper.csproj" -Encoding UTF8
+          dotnet pack "Xzonn.BlzHelper.csproj" -c "Release" -o ".\artifacts"
+          Remove-Item -Path "Xzonn.BlzHelper.csproj"
+          Move-Item -Path "Xzonn.BlzHelper.csproj.bak" -Destination "Xzonn.BlzHelper.csproj"
+      - name: Publish package to nuget.org
+        continue-on-error: true
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          dotnet nuget push ".\artifacts\*.nupkg" --api-key "$env:NUGET_API_KEY" --source "https://api.nuget.org/v3/index.json"
+      - name: Publish package to GitHub
+        continue-on-error: true
+        run: |
+          dotnet nuget add source --username "${{ github.repository_owner }}" --password "${{ secrets.GITHUB_TOKEN }}" --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+          dotnet nuget push ".\artifacts\*.nupkg" --source "github"
